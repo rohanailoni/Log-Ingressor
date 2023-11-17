@@ -1,0 +1,12 @@
+[database]
+host = "database-level-error.czzptrur4kwd.eu-north-1.rds.amazonaws.com"
+port = 3306
+user = "admin"
+password = "GgDA7yFpfM2We2"
+database= "Logger"
+maxOpenConns=10
+maxIdleConns=5
+
+[server]
+address = "0.0.0.0"
+port = 3000
