@@ -3,10 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI/Models"
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/model"
+	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI"
+	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/comms"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
@@ -51,66 +50,38 @@ func main() {
 
 func runQuery(cmd *cobra.Command, args []string) {
 	// Establish a connection to the MySQL database
+	var logger *log.Logger
+	logger = comms.LoggerInit()
 	db, err := sql.Open("mysql", "admin:GgDA7yFpfM2We2@tcp(database-level-error.czzptrur4kwd.eu-north-1.rds.amazonaws.com)/Logger")
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
 
-		}
-	}(db)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			logger.Fatal("Unable to close the database connection")
+		}
+	}(db)
 
 	// Construct the SQL query based on the provided flags
-	query := "SELECT * FROM ErrorLog WHERE 1=1"
-	argsList := []interface{}{}
-
-	if level != "" {
-		query += " AND level = ?"
-		argsList = append(argsList, level)
-	}
-
-	if message != "" {
-		query += " AND message = ?"
-		argsList = append(argsList, message)
-	}
-
-	if resourceID != "" {
-		query += " AND resourceId = ?"
-		argsList = append(argsList, resourceID)
-	}
-
-	if timestamp != "" {
-		query += " AND timestamp = ?"
-		argsList = append(argsList, timestamp)
-	}
-
-	if traceID != "" {
-		query += " AND TraceId = ?"
-		argsList = append(argsList, traceID)
-	}
-
-	if spanID != "" {
-		query += " AND spanId = ?"
-		argsList = append(argsList, spanID)
-	}
-
-	if commit != "" {
-		query += " AND Commit = ?"
-		argsList = append(argsList, commit)
-	}
-
-	if parentResourceID != "" {
-		query += " AND metadata_parentResourceId = ?"
-		argsList = append(argsList, parentResourceID)
-	}
-
+	query, argsList := CLI.PrepareGeneralQuery(level, message, resourceID, timestamp, traceID, spanID, commit, parentResourceID)
 	// Add other conditions as needed
-	fmt.Println(query)
+	logger.Println("creating the prepare statement")
+
+	stmt, err := CLI.PrepareGeneralStatement(db, query)
+	if err != nil {
+		log.Fatal("failed to prepare statements", err)
+	}
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			logger.Fatal("failed to close the prepared statement")
+		}
+	}(stmt)
+
 	// Execute the query
-	rows, err := db.Query(query, argsList...)
+	rows, err := stmt.Query(argsList...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -120,36 +91,5 @@ func runQuery(cmd *cobra.Command, args []string) {
 
 		}
 	}(rows)
-
-	// Process the result set
-	var logs []Models.LogEntryWrapper
-	t := table.NewWriter()
-	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"PrimaryKey", "level", "message", "resourceId", "timestamp", "traceId", "spanID", "commit", "metadata_parentResourceId"})
-
-	for rows.Next() {
-		var logEntry model.LogEntry
-		var key int
-		err := rows.Scan(
-			&key,
-			&logEntry.Level,
-			&logEntry.Message,
-			&logEntry.ResourceID,
-			&logEntry.Timestamp,
-			&logEntry.TraceID,
-			&logEntry.SpanID,
-			&logEntry.Commit,
-			&logEntry.Metadata.ParentResourceID,
-		)
-		if err != nil {
-			log.Fatal(err)
-		}
-		t.AppendRow([]interface{}{key, logEntry.Level, logEntry.Message, logEntry.ResourceID, logEntry.Timestamp, logEntry.TraceID, logEntry.SpanID, logEntry.Commit, logEntry.Metadata.ParentResourceID})
-	}
-
-	// Print the retrieved logs
-	for _, logEntry := range logs {
-		fmt.Printf("%+v\n", logEntry)
-	}
-	t.Render()
+	CLI.PrintRows(rows)
 }
