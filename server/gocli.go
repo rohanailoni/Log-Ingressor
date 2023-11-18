@@ -72,7 +72,7 @@ func init() {
 	}
 	regexCmd = &cobra.Command{
 		Use:   "regex",
-		Short: "Perform regex-based log filtering amde for dyte",
+		Short: "Perform regex-based log filtering made for dyte",
 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("args at regex", args)
@@ -89,7 +89,25 @@ func init() {
 			return nil
 		},
 	}
+	wildCardCmd := &cobra.Command{
+		Use:   "wildcard",
+		Short: "Perform wilcardbased log filtering made for dyte",
 
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println("args at wildcard", args)
+			if err := CLI.CheckAuthAndPermission(flagvalues); err != nil {
+				log.Println("Error while auth")
+				return err
+			}
+			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
+				logger.Println("duplicate check failed error,", err)
+				return err
+			}
+
+			runQuery(flagvalues)
+			return nil
+		},
+	}
 	rootCmd.Flags().StringVarP(&flagvalues.Level.RegularFlag, "level", "l", "", "Filter logs by level")
 	rootCmd.Flags().StringVarP(&flagvalues.ResourceId.RegularFlag, "resourceId", "r", "", "Filter logs by resource ID")
 	rootCmd.Flags().StringVarP(&flagvalues.Message.RegularFlag, "message", "m", "", "Filter logs by message")
@@ -114,8 +132,17 @@ func init() {
 	regexCmd.Flags().StringVarP(&flagvalues.ParentResourceId.RegexFlag, "ParentResId", "p", "", "Filter logs by Parent Resource ID pattern using regex")
 	regexCmd.Flags().StringVarP(&flagvalues.Commit.RegexFlag, "commit", "c", "", "Filter logs by commit pattern using regex")
 
+	wildCardCmd.Flags().StringVarP(&flagvalues.Level.WildcardFlag, "level", "l", "", "Filter logs by level pattern using wildcard(sql LIKE)")
+	wildCardCmd.Flags().StringVarP(&flagvalues.ResourceId.WildcardFlag, "resourceId", "r", "", "Filter logs by resource ID pattern using wildcard(sql LIKE)")
+	wildCardCmd.Flags().StringVarP(&flagvalues.Message.WildcardFlag, "message", "m", "", "Filter logs by message pattern using wildcard(sql LIKE)")
+	wildCardCmd.Flags().StringVarP(&flagvalues.TraceId.WildcardFlag, "TraceId", "T", "", "Filter logs by Trace ID pattern using wildcard(sql LIKE)")
+	wildCardCmd.Flags().StringVarP(&flagvalues.SpanId.WildcardFlag, "spanId", "s", "", "Filter logs by Span ID pattern using wildcard(sql LIKE)")
+	wildCardCmd.Flags().StringVarP(&flagvalues.ParentResourceId.WildcardFlag, "ParentResId", "p", "", "Filter logs by Parent Resource ID pattern using wildcard(sql LIKE)")
+	wildCardCmd.Flags().StringVarP(&flagvalues.Commit.WildcardFlag, "commit", "c", "", "Filter logs by commit pattern using wildcard(sql LIKE)")
+
 	rootCmd.AddCommand(regexCmd)
 	rootCmd.AddCommand(authCmd)
+	rootCmd.AddCommand(wildCardCmd)
 }
 func main() {
 	logger = comms.LoggerInit()

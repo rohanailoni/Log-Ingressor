@@ -25,7 +25,7 @@ func PrepareGeneralQuery(level, message, resourceID, traceID, spanID, commit, pa
 		}
 
 	}
-
+	fmt.Println(level)
 	queryErrorTable := "SELECT * FROM ErrorLog WHERE 1=1"
 	queryDebugTable := "SELECT * FROM DebugLog WHERE 1=1"
 	ErrorargsList := []interface{}{}
