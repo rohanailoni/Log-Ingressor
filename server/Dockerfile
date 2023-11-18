@@ -10,6 +10,8 @@ COPY . .
 # Download and install any dependencies
 RUN go mod download
 
+RUN rm -f gocli.go
+
 RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -o myapp
 
 
