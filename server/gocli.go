@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI"
 	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI/Models"
@@ -35,7 +36,11 @@ func init() {
 
 		Use:   "dyte",
 		Short: "A simple log query processor made for dyte",
+
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) == 0 {
+				return errors.New("No args provided")
+			}
 			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
 				logger.Println("duplicate check failed error,", err)
 				return err
@@ -49,11 +54,16 @@ func init() {
 	regexCmd = &cobra.Command{
 		Use:   "regex",
 		Short: "Perform regex-based log filtering amde for dyte",
+
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) == 0 {
+				return errors.New("No args provided")
+			}
 			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
 				logger.Println("duplicate check failed error,", err)
 				return err
 			}
+
 			runQuery(flagvalues)
 			return nil
 		},
