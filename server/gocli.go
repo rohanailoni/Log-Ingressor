@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI"
 	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI/Models"
@@ -25,9 +26,10 @@ import (
 //	parentResourceID string
 //)
 
-var rootCmd, regexCmd *cobra.Command
+var rootCmd, regexCmd, authCmd *cobra.Command
 var logger *log.Logger
 var flagvalues Models.Flagvalue
+var FlagUser Models.FlagUser
 
 func init() {
 
@@ -38,6 +40,11 @@ func init() {
 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("args at root", args)
+			if err := CLI.CheckAuthAndPermission(flagvalues); err != nil {
+				log.Println("Error while auth")
+				return err
+			}
+			log.Println("Authentication successful")
 			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
 				logger.Println("duplicate check failed error,", err)
 				return err
@@ -47,13 +54,32 @@ func init() {
 			return nil
 		},
 	}
+	authCmd = &cobra.Command{
+		Use:   "auth",
+		Short: "Perform auth for user registered for dyte .If not registerd ask admin",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if FlagUser.User == "" || FlagUser.Password == "" {
 
+				return errors.New("both username and password are null")
+			}
+			err := CLI.Authenticate(FlagUser.User, FlagUser.Password)
+			if err != nil {
+				log.Println("User not authorised for authentications")
+				return err
+			}
+			return nil
+		},
+	}
 	regexCmd = &cobra.Command{
 		Use:   "regex",
 		Short: "Perform regex-based log filtering amde for dyte",
 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("args at regex", args)
+			if err := CLI.CheckAuthAndPermission(flagvalues); err != nil {
+				log.Println("Error while auth")
+				return err
+			}
 			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
 				logger.Println("duplicate check failed error,", err)
 				return err
@@ -76,6 +102,10 @@ func init() {
 	rootCmd.Flags().StringVar(&flagvalues.FromTimestamp, "from", "", "Filter logs from timestamp")
 	rootCmd.Flags().StringVar(&flagvalues.ToTimestamp, "to", "", "Filter logs to timestamp")
 
+	//auth flags
+	authCmd.Flags().StringVarP(&FlagUser.User, "user", "u", "", "Username for auth")
+	authCmd.Flags().StringVarP(&FlagUser.Password, "password", "p", "", "Password for auth")
+
 	regexCmd.Flags().StringVarP(&flagvalues.Level.RegexFlag, "level", "l", "", "Filter logs by level pattern using regex")
 	regexCmd.Flags().StringVarP(&flagvalues.ResourceId.RegexFlag, "resourceId", "r", "", "Filter logs by resource ID pattern using regex")
 	regexCmd.Flags().StringVarP(&flagvalues.Message.RegexFlag, "message", "m", "", "Filter logs by message pattern using regex")
@@ -85,6 +115,7 @@ func init() {
 	regexCmd.Flags().StringVarP(&flagvalues.Commit.RegexFlag, "commit", "c", "", "Filter logs by commit pattern using regex")
 
 	rootCmd.AddCommand(regexCmd)
+	rootCmd.AddCommand(authCmd)
 }
 func main() {
 	logger = comms.LoggerInit()
