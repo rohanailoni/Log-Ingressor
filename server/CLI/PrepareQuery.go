@@ -5,9 +5,11 @@ import (
 	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI/Models"
 	"regexp"
 	"strings"
+	"time"
 )
 
-func PrepareGeneralQuery(level, message, resourceID, traceID, spanID, commit, parentResourceID Models.Valueset, timestamp string) (string, []interface{}) {
+func PrepareGeneralQuery(level, message, resourceID, traceID, spanID, commit, parentResourceID Models.Valueset, timestamp, fromTimestam, toTimestamp string) (string, []interface{}) {
+
 	//If level is defined then we are not required to check all;
 	CheckDegubLog := true
 	CheckErrorLog := true
@@ -28,6 +30,7 @@ func PrepareGeneralQuery(level, message, resourceID, traceID, spanID, commit, pa
 	queryDebugTable := "SELECT * FROM DebugLog WHERE 1=1"
 	ErrorargsList := []interface{}{}
 	DebugargsList := []interface{}{}
+	queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList = createIntermediateTimeStampQuery("timestamp", fromTimestam, toTimestamp, timestamp, queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList)
 	queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList = CreateIntermediateQuery("level", level, queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList)
 	queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList = CreateIntermediateQuery("message", message, queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList)
 	queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList = CreateIntermediateQuery("resourceID", resourceID, queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList)
@@ -36,7 +39,7 @@ func PrepareGeneralQuery(level, message, resourceID, traceID, spanID, commit, pa
 	queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList = CreateIntermediateQuery("commit", commit, queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList)
 	queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList = CreateIntermediateQuery("metadata_parentResourceId", parentResourceID, queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList)
 
-	fmt.Println(queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList, CheckErrorLog, CheckDegubLog)
+	//fmt.Println(queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList, CheckErrorLog, CheckDegubLog)
 	if CheckErrorLog && !CheckDegubLog {
 		return queryErrorTable, ErrorargsList
 	} else if !CheckErrorLog && CheckDegubLog {
@@ -73,5 +76,24 @@ func CreateIntermediateQuery(types string, set Models.Valueset, queryErrorTable,
 		}
 	}
 
+	return queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList
+}
+func createIntermediateTimeStampQuery(types string, from, to, timestamp, queryErrorTable, queryDebugTable string, ErrorargsList, DebugargsList []interface{}) (string, string, []interface{}, []interface{}) {
+	if timestamp == "" && from == "" && to == "" {
+		return queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList
+	}
+	if from != "" && to == "" {
+		//we are considering exact user time as to time
+		to = time.Now().Format(time.RFC3339)
+		queryErrorTable += fmt.Sprintf(" AND %s BETWEEN ? AND ?", types)
+		queryDebugTable += fmt.Sprintf(" WHERE %s BETWEEN ? AND ?", types)
+		ErrorargsList = append(ErrorargsList, from, to)
+		DebugargsList = append(DebugargsList, from, to)
+	} else if timestamp != "" {
+		queryErrorTable += fmt.Sprintf(" AND %s = ?", types)
+		queryDebugTable += fmt.Sprintf(" WHERE %s = ?", types)
+		ErrorargsList = append(ErrorargsList, timestamp)
+		DebugargsList = append(DebugargsList, timestamp)
+	}
 	return queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList
 }

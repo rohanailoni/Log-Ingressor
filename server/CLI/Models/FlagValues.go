@@ -46,7 +46,7 @@ func (this *Flagvalue) CheckDuplicateOnAllFlags() error {
 	}
 
 	if this.ToTimestamp != "" && this.FromTimestamp == "" {
-		return errors.New("error from time not given but to time is given")
+		return errors.New("error fromtime not given but totime is given! try to give fromtime and totime automatically set to NOW")
 	}
 	if this.Timestamp != "" && (this.FromTimestamp != "" || this.ToTimestamp != "") {
 		return errors.New("filter on both fromtime or totime and timeline is given this is not allowed")

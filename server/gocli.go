@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI"
 	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI/Models"
@@ -38,9 +37,7 @@ func init() {
 		Short: "A simple log query processor made for dyte",
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 0 {
-				return errors.New("No args provided")
-			}
+			fmt.Println("args at root", args)
 			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
 				logger.Println("duplicate check failed error,", err)
 				return err
@@ -56,9 +53,7 @@ func init() {
 		Short: "Perform regex-based log filtering amde for dyte",
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 0 {
-				return errors.New("No args provided")
-			}
+			fmt.Println("args at regex", args)
 			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
 				logger.Println("duplicate check failed error,", err)
 				return err
@@ -69,10 +64,6 @@ func init() {
 		},
 	}
 
-	rootCmd.Flags().StringVarP(&flagvalues.Timestamp, "timestamp", "t", "", "Filter logs from  this timestamp")
-	rootCmd.Flags().StringVarP(&flagvalues.FromTimestamp, "from", "", "", "Filter logs from timestamp")
-	rootCmd.Flags().StringVarP(&flagvalues.ToTimestamp, "to", "", "", "Filter logs to timestamp")
-
 	rootCmd.Flags().StringVarP(&flagvalues.Level.RegularFlag, "level", "l", "", "Filter logs by level")
 	rootCmd.Flags().StringVarP(&flagvalues.ResourceId.RegularFlag, "resourceId", "r", "", "Filter logs by resource ID")
 	rootCmd.Flags().StringVarP(&flagvalues.Message.RegularFlag, "message", "m", "", "Filter logs by message")
@@ -80,6 +71,10 @@ func init() {
 	rootCmd.Flags().StringVarP(&flagvalues.SpanId.RegularFlag, "spanId", "s", "", "Filter logs by Span ID")
 	rootCmd.Flags().StringVarP(&flagvalues.ParentResourceId.RegularFlag, "ParentResId", "p", "", "Filter logs by Parent Resource ID")
 	rootCmd.Flags().StringVarP(&flagvalues.Commit.RegularFlag, "commit", "c", "", "Filter logs by commit")
+	//time flags
+	rootCmd.Flags().StringVarP(&flagvalues.Timestamp, "timestamp", "t", "", "Filter logs from  this timestamp")
+	rootCmd.Flags().StringVar(&flagvalues.FromTimestamp, "from", "", "Filter logs from timestamp")
+	rootCmd.Flags().StringVar(&flagvalues.ToTimestamp, "to", "", "Filter logs to timestamp")
 
 	regexCmd.Flags().StringVarP(&flagvalues.Level.RegexFlag, "level", "l", "", "Filter logs by level pattern using regex")
 	regexCmd.Flags().StringVarP(&flagvalues.ResourceId.RegexFlag, "resourceId", "r", "", "Filter logs by resource ID pattern using regex")
@@ -117,7 +112,7 @@ func runQuery(flagvalue Models.Flagvalue) {
 	}(db)
 
 	// Construct the SQL query based on the provided flags
-	query, argsList := CLI.PrepareGeneralQuery(flagvalues.Level, flagvalues.Message, flagvalues.ResourceId, flagvalues.TraceId, flagvalues.SpanId, flagvalues.Commit, flagvalues.ParentResourceId, flagvalues.Timestamp)
+	query, argsList := CLI.PrepareGeneralQuery(flagvalues.Level, flagvalues.Message, flagvalues.ResourceId, flagvalues.TraceId, flagvalues.SpanId, flagvalues.Commit, flagvalues.ParentResourceId, flagvalues.Timestamp, flagvalue.FromTimestamp, flagvalue.ToTimestamp)
 	fmt.Println(query, argsList)
 	logger.Println("creating the prepare statement", query)
 	//
