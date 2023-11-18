@@ -1,61 +1,44 @@
-package main
+package cmd
 
 import (
-	"database/sql"
 	"fmt"
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI"
 	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI/Models"
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/comms"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
-	"log"
-	"os"
 )
 
 //var (
 //	level            string
-//	message          string
+//	messagePattern   string
+//	commitPattern    string
 //	resourceID       string
+//	timestamp        string
 //	fromTimestamp    string
 //	toTimestamp      string
-//	timestamp        string
 //	traceID          string
 //	spanID           string
-//	commit           string
 //	parentResourceID string
+//	message          string
 //)
 
-var rootCmd, regexCmd *cobra.Command
-var logger *log.Logger
-var flagvalues Models.Flagvalue
-
-func init() {
-
-	rootCmd = &cobra.Command{
+func InitCli() (*cobra.Command, *cobra.Command, Models.Flagvalue, error) {
+	var flagvalues Models.Flagvalue
+	rootCmd := &cobra.Command{
 
 		Use:   "dyte",
 		Short: "A simple log query processor made for dyte",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
-				logger.Println("duplicate check failed error,", err)
-				return err
-			}
-
-			runQuery(flagvalues)
-			return nil
+		Run: func(cmd *cobra.Command, args []string) {
+			flagvalues.Timestamp, _ = cmd.Flags().GetString("timestamp")
+			flagvalues.FromTimestamp, _ = cmd.Flags().GetString("from")
+			flagvalues.Level.RegexFlag, _ = cmd.Flags().GetString("level")
+			fmt.Println(flagvalues.Level.RegexFlag, cmd.Flags())
 		},
 	}
-
-	regexCmd = &cobra.Command{
+	fmt.Println("we are in inti", flagvalues.Level.RegexFlag)
+	regexCmd := &cobra.Command{
 		Use:   "regex",
 		Short: "Perform regex-based log filtering amde for dyte",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := flagvalues.CheckDuplicateOnAllFlags(); err != nil {
-				logger.Println("duplicate check failed error,", err)
-				return err
-			}
-			runQuery(flagvalues)
-			return nil
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(args)
 		},
 	}
 
@@ -80,59 +63,7 @@ func init() {
 	regexCmd.Flags().StringVarP(&flagvalues.Commit.RegexFlag, "commit", "c", "", "Filter logs by commit pattern using regex")
 
 	rootCmd.AddCommand(regexCmd)
-}
-func main() {
-	logger = comms.LoggerInit()
-	rootCmd.TraverseChildren = true //this is required to traverse all the child and parent flags if set to false will only consider child flags
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	fmt.Println("we are in inti", flagvalues)
+	return rootCmd, regexCmd, flagvalues, flagvalues.CheckDuplicateOnAllFlags()
 
-}
-
-func runQuery(flagvalue Models.Flagvalue) {
-	// Establish a connection to the MySQL database
-
-	db, err := sql.Open("mysql", "admin:GgDA7yFpfM2We2@tcp(database-level-error.czzptrur4kwd.eu-north-1.rds.amazonaws.com)/Logger")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			logger.Fatal("Unable to close the database connection")
-		}
-	}(db)
-
-	// Construct the SQL query based on the provided flags
-	query, argsList := CLI.PrepareGeneralQuery(flagvalues.Level, flagvalues.Message, flagvalues.ResourceId, flagvalues.TraceId, flagvalues.SpanId, flagvalues.Commit, flagvalues.ParentResourceId, flagvalues.Timestamp)
-	fmt.Println(query, argsList)
-	logger.Println("creating the prepare statement", query)
-	//
-	stmt, err := CLI.PrepareGeneralStatement(db, query)
-	if err != nil {
-		log.Fatal("failed to prepare statements", err)
-	}
-	logger.Println("Creating prepare statement successful")
-	defer func(stmt *sql.Stmt) {
-		err := stmt.Close()
-		if err != nil {
-			logger.Fatal("failed to close the prepared statement")
-		}
-	}(stmt)
-
-	// Execute the query
-	rows, err := stmt.Query(argsList...)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-
-		}
-	}(rows)
-	CLI.PrintRows(rows)
 }
