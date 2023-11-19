@@ -587,7 +587,26 @@ then i can just only go with level
 go run gocli.go regex --message
 ```
 
-this will return an error as this is not authrorised for the user real examples is attached in ## Usage with real example session
+this will return an error as this is not authorised for the user real examples is attached in ## Usage with real example session
+
+### The design that i want to develop but cannot due to time constraint
+
+![Image permission remove :(](https://drive.google.com/uc?export=view&id=1h6WDi3G6pn2GHGqrV28QmUQA5TAw_lpo)
+
+* This will have an addition layer of redis which will acts as `write around` cache so the query result are store in cached to users till `TTL`
+
+### The sync client server GoCLI design which was removed due to time.
+
+![image removed :(](https://drive.google.com/uc?export=view&id=14rt6qGgdoBzgeAQnkgnmb2-Yj0PY0hKn)
+
+In this there is an addition server our gocli will be talking to in client-server architecture over TCP.
+#### Advantages of this:-
+* so the server can maintain some connection pool over a period of time unkile standalone cli which has to create a conneciton everytime it runs which effects the performance
+* and easy to cache multiple user query data 
+* easy and secure authentication
+* 
+
+
 
 
 <!-- LICENSE -->
