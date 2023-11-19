@@ -20,10 +20,10 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">Log Ingestor and Query CLI</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    This Readme contans the log ingestor and query interface design
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
@@ -50,7 +50,7 @@
 - [Acknowledgments](#acknowledgments)
 
 
-
+# Youtube Link for Demo:-https://youtu.be/l5AA-Oe99pg
 <!-- CONTACT -->
 ## Contact
 
@@ -204,6 +204,7 @@ docker-compose up
 
 
 ## Starting Query CLI Interface
+
 ### Clone the Repo
 ```
 git clone https://github.com/dyte-submissions/november-2023-hiring-rohanailoni.git
@@ -219,6 +220,10 @@ cd server
 ```
 go mod download 
 ```
+### please this before for authentication so that you wont get an error:-
+```
+go run gocli.go auth -u "dyte_admin" -p "dyte_1234"
+```
 
 
 ### Running the gocli
@@ -230,7 +235,7 @@ go run gocli.go --help
 
 
 <!-- USAGE EXAMPLES -->
-### Usage Example with photos:-
+## Usage Example with photos:-
 * Find all logs with the level set to "error".
   * query cli :- `go run gocli.go --level "error"`
   
@@ -251,7 +256,13 @@ go run gocli.go --help
   * query:-  `go run gocli.go --from "2023-09-10T00:00:00Z" --to "2023-09-15T23:59:59Z"`
   * can zoom and check timeline for more validity
     * ![check "https://drive.google.com/uc?export=view&id=1m__DBrFA6YjwIBsqzt2pIcM5SZOELG0B"](https://drive.google.com/uc?export=view&id=1m__DBrFA6YjwIBsqzt2pIcM5SZOELG0B)
-
+* Using Authentication
+  * there is a user nameed `Dyte_user` who has permission to view all `regex`,`wildcard`  filter, but only permission to filter `level` and `resourceId`
+  * lets login first using `go run gocli.go auth -u "dyte_admin" -p "dyte_1234"`
+  * ![](https://drive.google.com/uc?export=view&id=1qrpfus_u2xIfMr3bm1GKngIX_Lal2vGS)
+  * now we check `go run gocli.go --message "found in db"` we will get auth error.
+    * ![](https://drive.google.com/uc?export=view&id=1papm-wfzFEq2Gj350zLyHY76yvbO08jY)
+  
 ## Usage
 ### Log Ingestor API Documentation
 
@@ -604,7 +615,7 @@ In this there is an addition server our gocli will be talking to in client-serve
 * so the server can maintain some connection pool over a period of time unkile standalone cli which has to create a conneciton everytime it runs which effects the performance
 * and easy to cache multiple user query data 
 * easy and secure authentication
-* 
+
 
 
 
