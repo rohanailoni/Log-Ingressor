@@ -617,6 +617,14 @@ In this there is an addition server our gocli will be talking to in client-serve
 * easy and secure authentication
 
 
+## Feasible Async Architecture ---Just an idea
+
+![](https://drive.google.com/uc?export=view&id=10VDJTECEPXGBGUIljvDK9KDuETn7ChC4)
+
+so I want to use hybrid model so that we can use sql for transactional data and nosql for analatical data more likely historical data 
+
+but storing in both the db will cause the consistency issues in both which violates our `assumption 1`
+so kafka is here to help persisting logs so that workers can read later
 
 # Load Testing
 ## Load Test Details
