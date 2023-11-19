@@ -86,14 +86,19 @@ func createIntermediateTimeStampQuery(types string, from, to, timestamp, queryEr
 		//we are considering exact user time as to time
 		to = time.Now().Format(time.RFC3339)
 		queryErrorTable += fmt.Sprintf(" AND %s BETWEEN ? AND ?", types)
-		queryDebugTable += fmt.Sprintf(" WHERE %s BETWEEN ? AND ?", types)
+		queryDebugTable += fmt.Sprintf(" AND %s BETWEEN ? AND ?", types)
 		ErrorargsList = append(ErrorargsList, from, to)
 		DebugargsList = append(DebugargsList, from, to)
 	} else if timestamp != "" {
 		queryErrorTable += fmt.Sprintf(" AND %s = ?", types)
-		queryDebugTable += fmt.Sprintf(" WHERE %s = ?", types)
+		queryDebugTable += fmt.Sprintf(" AND %s = ?", types)
 		ErrorargsList = append(ErrorargsList, timestamp)
 		DebugargsList = append(DebugargsList, timestamp)
+	} else if from != "" && to != "" {
+		queryErrorTable += fmt.Sprintf(" AND %s BETWEEN ? AND ?", types)
+		queryDebugTable += fmt.Sprintf(" AND %s BETWEEN ? AND ?", types)
+		ErrorargsList = append(ErrorargsList, from, to)
+		DebugargsList = append(DebugargsList, from, to)
 	}
 	return queryErrorTable, queryDebugTable, ErrorargsList, DebugargsList
 }

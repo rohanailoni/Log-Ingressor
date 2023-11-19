@@ -31,5 +31,5 @@ func LogHandler(context *gin.Context, pool *mysql.DBPool, logger *log.Logger) {
 	if err != nil {
 		logger.Fatal("Failed to execute the logger with log ingest %s", logEntry)
 	}
-	context.JSON(http.StatusOK, gin.H{"status": "Log inserted sucessfully"})
+	context.JSON(http.StatusOK, gin.H{"status": "Log inserted successfully"})
 }
