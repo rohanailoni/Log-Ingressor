@@ -618,6 +618,59 @@ In this there is an addition server our gocli will be talking to in client-serve
 
 
 
+# Load Testing
+## Load Test Details
+
+### Test 1
+#### Load Test Patter:- Worker Pool Patter
+#### Concurrency Pool:-20
+## Number of servers handling the load:-2
+#### number of request 100
+![](https://drive.google.com/uc?export=view&id=1u1eRIaSsLAu0Uq2zncBcGa8-wX35-BjL)
+##### errors:-0
+
+## Test 2
+#### Load Test Patter:- Worker Pool Patter
+#### Concurrency Pool:-20
+#### number of request 10000
+## Number of servers handling the load:-2
+
+![](https://drive.google.com/uc?export=view&id=1M8sQFFA2DyfjIX9bmiC5x9FmKEtzQJpJ)
+###### AfterTest Notest:-
+* 0 errors detected
+* cpu performance-6%
+* ![](https://drive.google.com/uc?export=view&id=1PiGtNqQfguJK-qRimAx8uFgrOsrCZNGX)
+
+## Test 3
+#### Load Test Patter:- Worker Pool Patter
+#### Concurrency Pool:-1000(goroutine lightweight threads)
+#### number of request 5,000
+## Number of servers handling the load:-2
+![](https://drive.google.com/uc?export=view&id=1L9rDPGGBB635uRQKrrtoOoWxevEw0VVK)
+
+time taken:-
+![](https://drive.google.com/uc?export=view&id=1pdVdc_IINVHN28IcgQS6dYOZWheGHEvg)
+
+
+After TestNotes:-
+* 0 errors detected
+* cpu snapshot-1
+* ![](https://drive.google.com/uc?export=view&id=1_4D7_EC2D48aKNZCFQALTinFXMzbOhS2)
+
+* CPU snapshot-2
+* ![](https://drive.google.com/uc?export=view&id=1EyZP5Xh6E0UsAlUVE9RIx8w91dz2caEf)
+* Docker logs
+  ![](https://drive.google.com/uc?export=view&id=1upyn7oLmR7DOVDGssDRd-fuLdQwZMURK)
+
+
+
+
+
+
+
+
+
+
 
 
 <!-- LICENSE -->
