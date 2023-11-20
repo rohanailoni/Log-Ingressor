@@ -50,7 +50,6 @@
 - [Acknowledgments](#acknowledgments)
 
 
-# Youtube Link for Demo:-https://youtu.be/l5AA-Oe99pg
 <!-- CONTACT -->
 ## Contact
 
@@ -58,7 +57,6 @@
 #### Email:- rohanailoni@gmail.com
 #### Additonal Email:- rohanailoni@gmail.com
 #### phone:- 8008260370
-#### Project Link: [https://github.com/dyte-submissions/november-2023-hiring-rohanailoni](https://github.com/dyte-submissions/november-2023-hiring-rohanailoni)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
