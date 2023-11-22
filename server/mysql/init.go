@@ -1,7 +1,7 @@
 package mysql
 
 import (
-	comms "github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/comms"
+	comms "github.com/rohanailoni/Log-Ingressor/comms"
 	"strconv"
 )
 

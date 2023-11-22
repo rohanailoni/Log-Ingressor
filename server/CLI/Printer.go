@@ -2,8 +2,8 @@ package CLI
 
 import (
 	"database/sql"
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/model"
 	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/rohanailoni/Log-Ingressor/model"
 	"log"
 	"os"
 )

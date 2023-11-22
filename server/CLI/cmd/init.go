@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/CLI/Models"
+	"github.com/rohanailoni/Log-Ingressor/CLI/Models"
 	"github.com/spf13/cobra"
 )
 

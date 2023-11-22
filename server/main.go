@@ -2,11 +2,11 @@ package main
 
 //password:-GgDA7yFpfM2We2 //will not terminate the instance till 27-11-2023
 import (
-	comms "github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/comms"
-	handler "github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/handler"
-	mysql "github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/mysql"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	comms "github.com/rohanailoni/Log-Ingressor/comms"
+	handler "github.com/rohanailoni/Log-Ingressor/handler"
+	mysql "github.com/rohanailoni/Log-Ingressor/mysql"
 	"os"
 	"strconv"
 )

@@ -105,9 +105,9 @@
 * Implemented Auth based filters via CLI ---BONUS ✔️
 
 ## System Architecture:-
-### Synchronous Ingestion of Logs and Query CLI
+### Async Ingestion of Logs and Query CLI--final and completed part.
 
-![Image perssions removed](https://drive.google.com/uc?export=view&id=1xO_0KryYMbDjid--PKjltRFN5pAJ5pih)
+![Image perssions removed](https://drive.google.com/uc?export=view&id=1l8ygdwrQvPuOpuyKyx-qLaihtzMf3qlY "contact the admin")
 
 
 ## Overview:-
@@ -669,7 +669,9 @@ After TestNotes:-
   ![](https://drive.google.com/uc?export=view&id=1upyn7oLmR7DOVDGssDRd-fuLdQwZMURK)
 
 
+### Synchronous Ingestion of Logs and Query CLI---first implementation
 
+![Image perssions removed](https://drive.google.com/uc?export=view&id=1xO_0KryYMbDjid--PKjltRFN5pAJ5pih "contact the admin")
 
 
 

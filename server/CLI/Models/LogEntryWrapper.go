@@ -1,7 +1,7 @@
 package Models
 
 import (
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/model"
+	"github.com/rohanailoni/Log-Ingressor/model"
 )
 
 type LogEntryWrapper struct {

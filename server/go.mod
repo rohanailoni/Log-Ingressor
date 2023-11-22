@@ -1,4 +1,4 @@
-module github.com/dyte-submissions/november-2023-hiring-rohanailoni/server
+module github.com/rohanailoni/Log-Ingressor
 
 go 1.19
 

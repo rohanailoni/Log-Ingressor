@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/comms"
-	models "github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/model"
-	"github.com/dyte-submissions/november-2023-hiring-rohanailoni/server/mysql"
 	"github.com/gin-gonic/gin"
+	"github.com/rohanailoni/Log-Ingressor/comms"
+	models "github.com/rohanailoni/Log-Ingressor/model"
+	"github.com/rohanailoni/Log-Ingressor/mysql"
 	"log"
 	"net/http"
 )
