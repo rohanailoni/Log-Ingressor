@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ workflow ]
+  pull_request:
+    branches: [ workflow ]
+
+
+
+jobs:
+  build:
+    name: creating a writing to a pipe
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: creating a pipe.
+        run: |
+          PIPE_NAME="my_pipe"
+          mkfifo "$PIPE_NAME"
+          # Open the pipe in read-write mode and capture the file descriptor
+          exec 3<>"$PIPE_NAME"
+    
+
+
+
+
